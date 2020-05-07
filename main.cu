@@ -176,7 +176,6 @@ void run()
     T beta = 0.5;
 
 
-    checkCudaErrors(cudaMemset(C, 0, sizeof(T) * M * N));
     curandGen(curand, C, M * N);
     checkCudaErrors(cudaMemcpy(tmp, C, M * N * sizeof(T), cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemset(C_gold, 0, sizeof(T) * M * N));
@@ -186,17 +185,20 @@ void run()
     transpose(tmp, C_gold);
     checkCudaErrors(cudaDeviceSynchronize());
 
-    // myGEMM(A, B, C, alpha, beta);
+    myGEMM(A, B, C, alpha, beta);
+    checkCudaErrors(cudaDeviceSynchronize());
     
     // baseline implementation which has right answer
-    dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-    dim3 grid( (N + block.x - 1) / block.x, (M + block.y - 1) / block.y );
-    gemm <<<grid, block>>>
-        (A, B, C, M, N, K, alpha, beta);
+    // dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
+    // dim3 grid( (N + block.x - 1) / block.x, (M + block.y - 1) / block.y );
+    // gemm <<<grid, block>>>
+    //     (A, B, C, M, N, K, alpha, beta);
 
     
-    int errornum = 0;
-    if( (errornum = validate(C_gold, C, M * N)) != 0)
+    checkCudaErrors(cudaDeviceSynchronize());
+    int errornum = validate(C_gold, C, M * N);
+    checkCudaErrors(cudaDeviceSynchronize());
+    if( errornum != 0)
     {
         printf("%d errors compared with correct answer\n", errornum);
         // exit(0);
@@ -205,6 +207,7 @@ void run()
     {
         printf("Validation PASS\n");
     }
+
 
 
     // baseline

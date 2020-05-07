@@ -55,7 +55,7 @@ __global__ void validate_kernel(T* ref, T* ans, int num, int* numdiff)
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
     if(tid < num)
     {
-        if(abs((ref[tid] - ans[tid]) / ref[tid]) > 1e-3)
+        if(abs((ref[tid] - ans[tid]) / ref[tid]) > 1e-1)
         {
             atomicAdd(numdiff, 1);
         }
