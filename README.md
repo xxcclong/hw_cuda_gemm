@@ -18,7 +18,7 @@ $C = \alpha A * B + \beta C$
 
 同学们只需要在`include/gemm.h`里面实现你自己的gemm函数（注意不要修改接口）。
 
-考虑到要达到最优的性能，一些同学可能会根据输入的参数（M，N，K）做一些预处理之后再进行计算，所以在`include/gemm.h`的`myGEMM`预留好了两种接口，一种是无需预处理（将`preprocess`设置为`false`），只需要把自己的gemmkernel实现在`myGEMM`函数里即可；另一种是需要预处理（请将`preprocess`设置为`false`），这种情况下需要让`myGEMM`返回自己计时得到的时间（使用了预处理的话，自己计时请注意**在恰当的位置**添加cuda同步函数（`cudaDeviceSynchronize()`），防止kernel还没结束就结束计时，导致得到的运行时间偏小）
+考虑到要达到最优的性能，一些同学可能会根据输入的参数（M，N，K）做一些预处理之后再进行计算，所以在`include/gemm.h`的`myGEMM`预留好了两种接口，一种是无需预处理（将`preprocess`设置为`true`），只需要把自己的gemmkernel实现在`myGEMM`函数里即可；另一种是需要预处理（请将`preprocess`设置为`false`），这种情况下需要让`myGEMM`返回自己计时得到的时间（使用了预处理的话，自己计时请注意**在恰当的位置**添加cuda同步函数（`cudaDeviceSynchronize()`），防止kernel还没结束就结束计时，导致得到的运行时间偏小）
 
 ### How to run
 
