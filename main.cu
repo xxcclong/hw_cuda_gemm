@@ -163,21 +163,23 @@ void run()
     curandGenerator_t curand;
     curandCreateGenerator(&curand, CURAND_RNG_PSEUDO_DEFAULT);
     curandSetPseudoRandomGeneratorSeed(curand, 123ULL);
-    T *A, *B, *C, *C_gold, *tmp;
+    T *A, *B, *C, *C_gold, *tmp, *tmp2;
     checkCudaErrors(cudaMallocManaged(&A,      M * K * sizeof(T)));
     checkCudaErrors(cudaMallocManaged(&B,      K * N * sizeof(T)));
     checkCudaErrors(cudaMallocManaged(&C,      M * N * sizeof(T)));
     checkCudaErrors(cudaMallocManaged(&C_gold, M * N * sizeof(T)));
     checkCudaErrors(cudaMallocManaged(&tmp,    M * N * sizeof(T)));
+    checkCudaErrors(cudaMallocManaged(&tmp2,    M * N * sizeof(T)));
     curandGen(curand, A, M * K);
     curandGen(curand, B, K * N);
 
     T alpha = 1.5;
-    T beta = 0.5;
+    T beta = 500;
 
 
     curandGen(curand, C, M * N);
-    checkCudaErrors(cudaMemcpy(tmp, C, M * N * sizeof(T), cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(tmp2, C, M * N * sizeof(T), cudaMemcpyDeviceToDevice));
+    transpose(tmp2, tmp);
     checkCudaErrors(cudaMemset(C_gold, 0, sizeof(T) * M * N));
 
     // correctness validation
