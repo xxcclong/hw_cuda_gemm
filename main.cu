@@ -111,6 +111,33 @@ cublasGemm(T* A, T* B, T* C, T alpha, T beta)
         C, M));
 }
 
+template <typename T>
+typename std::enable_if<(std::is_same<T, float>::value)>::type
+transpose2(T* in, T* out)
+{
+    T alpha = 1;
+    checkCudaErrors(cublasSgeam(cublasH, CUBLAS_OP_T, CUBLAS_OP_N, 
+        M, N, 
+        &alpha, 
+        in, N, 
+        NULL, 
+        NULL, M, 
+        out, M));
+}
+
+template <typename T>
+typename std::enable_if<(std::is_same<T, double>::value)>::type
+transpose2(T* in, T* out)
+{
+    T alpha = 1;
+    checkCudaErrors(cublasDgeam(cublasH, CUBLAS_OP_T, CUBLAS_OP_N, 
+        M, N, 
+        &alpha, 
+        in, N, 
+        NULL, 
+        NULL, M, 
+        out, M));
+}
 
 template <typename T>
 typename std::enable_if<(std::is_same<T, float>::value)>::type
@@ -179,7 +206,7 @@ void run()
 
     curandGen(curand, C, M * N);
     checkCudaErrors(cudaMemcpy(tmp2, C, M * N * sizeof(T), cudaMemcpyDeviceToDevice));
-    transpose(tmp2, tmp);
+    transpose2(tmp2, tmp);
     checkCudaErrors(cudaMemset(C_gold, 0, sizeof(T) * M * N));
 
     // correctness validation
